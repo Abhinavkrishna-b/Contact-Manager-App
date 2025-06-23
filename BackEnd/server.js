@@ -4,6 +4,9 @@ const dotenv = require('dotenv').config();
 const port = process.env.PORT || 8000;
 const errorHandler = require('./customMiddleware/errorHandling')
 const app = express();
+const connectDB=require("./config/dbConnection")
+
+connectDB();
 
 app.use(express.json())
 app.use('/contact',require('./Routes/contactRoutes'));
