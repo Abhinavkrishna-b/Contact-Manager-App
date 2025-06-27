@@ -10,6 +10,7 @@ connectDB();
 
 app.use(express.json())
 app.use('/contact',require('./Routes/contactRoutes'));
+app.use('/user',require("./Routes/userRoutes"));
 app.use(errorHandler);
 console.log("Executed");
 

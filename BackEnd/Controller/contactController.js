@@ -3,7 +3,7 @@ const Contacts = require("../models/contactSchema");
 
 
 const getContact = asyncHandler(async (req,res)=>{
-    const contact = await Contacts.find();
+    const contact = await Contacts.find({user_id:req.user.id});
     res.status(200).json(contact);
 })
 
@@ -19,6 +19,7 @@ const createContact = asyncHandler(async(req,res)=>{
         name,
         email,
         phone,
+        user_id:req.user.id,
         //In object literals, if the property key and the variable name are the same, ES6 allows the use of a shorthand syntax to define object properties.
     })
     res.status(201).json(contact);     
@@ -38,6 +39,11 @@ const updateContact =asyncHandler( async(req,res)=>{
         throw new Error("Contact Not Found");
     }
 
+    if(contact.user_id.toString() !== req.user.id){
+        res.status(403);
+        throw new Error("You don't have the permission");
+    }
+
     const updatedContact = await Contacts.findByIdAndUpdate(req.params.id,req.body,{ new: true, runValidators: true }
 );
     res.status(200).json(updatedContact);
@@ -48,7 +54,10 @@ const deleteContact =asyncHandler(async(req,res)=>{
         res.status(404);
         throw new Error("Contact Not Found");
     }
-
+    if(contact.user_id.toString() !== req.user.id){
+        res.status(403);
+        throw new Error("You don't have the permission");
+    }
     await Contacts.deleteOne({ _id: contact._id });
     res.status(200).json(contact);
 })
